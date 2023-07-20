@@ -1,0 +1,181 @@
+# restclient mode instead of having to use insomnia which is annoying!!
+# (use-package restclient) need to add this to .emacs file
+
+GET https://api.github.com
+User-Agent: Emacs Restclient
+
+# -*- restclient -*-
+#
+# Gets  all Github APIs, formats JSON, shows response status and headers underneath.
+# Also sends a User-Agent header, because the Github API requires this.
+#
+GET https://api.github.com
+User-Agent: Emacs Restclient
+
+#
+# XML is supported - highlight, pretty-print
+#
+GET http://www.redmine.org/issues.xml?limit=10
+
+#
+# It can even show an image!
+#
+GET http://upload.wikimedia.org/wikipedia/commons/6/63/Wikipedia-logo.png
+#
+# A bit of json GET, you can pass headers too
+#
+GET http://jira.atlassian.com/rest/api/latest/issue/JRA-9
+User-Agent: Emacs24
+Accept-Encoding: compress, gzip
+
+
+#
+# Post works too, entity just goes after an empty line. Same is for PUT.
+#
+POST https://jira.atlassian.com/rest/api/2/search
+Content-Type: application/json
+
+{
+        "jql": "project = HCPUB",
+        "startAt": 0,
+        "maxResults": 15,
+        "fields": [
+                "summary",
+                "status",
+                "assignee"
+        ]
+}
+
+#
+# And delete, will return not-found error...
+#
+DELETE https://jira.atlassian.com/rest/api/2/version/20
+
+
+# Set a variable to the value of your ip address using a jq expression
+# GET http://httpbin.org/ip
+# -> jq-set-var :my-ip .origin
+
+
+# GET http://localhost:3000/messages/2
+# User-Agent: Emacs Restclient
+
+# POST http://localhost:3000/auth/register
+# Content-Type: application/json
+
+# {
+# 	"username"   : "frank",
+# 	"password"   : "frank",
+# 	"first_name" : "frank",
+# 	"last_name"  : "smith",
+# 	"phone"      : "222-222-2222"
+#  }
+
+# POST http://localhost:3000/messages/1/read
+# Content-Type: application/json
+
+
+# POST http://localhost:3000/messages/
+# Content-Type: application/json
+
+# {
+# 	"body" : " I really want to have a party",
+# 	"to_username" : "ali",
+# 	"from_username" : "ari"
+# }
+
+# GET http://localhost:3000/users
+# User-Agent: Emacs Restclient
+# Content-Type: application/json
+# {
+#   "_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZyYW5rIiwiaWF0IjoxNjg5Nzk3MDQ0fQ.pMN8-bYag3RIzFPyuq2wyfHUyCCoxD6ZAXIBWcMsh9o"
+# }
+# # User-Agent: Emacs Restclient
+# GET http://localhost:3000/users/frank
+# Content-Type: application/json
+# {
+#   "_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZyYW5rIiwiaWF0IjoxNjg5Nzk3NzU0fQ.aimsjTlveg7wnd124MwrPg98Yk8JGcLFpV_git9RH84"
+# }
+
+# GET http://localhost:3000/users/frank
+# Content-Type: application/json
+# {
+#   "_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImZyYW5rIiwiaWF0IjoxNjg5Nzk3NzU0fQ.aimsjTlveg7wnd124MwrPg98Yk8JGcLFpV_git9RH84"
+# }
+
+GET http://localhost:3000/messages/12
+Content-Type: application/json
+{
+ "_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcnkiLCJpYXQiOjE2ODk4MDYwNjN9.M2CpShJt0ZuWwhddH78XO9NuVLD-tvAC0YlW1Nm92wY"
+}
+
+# POST http://localhost:3000/auth/login
+# Content-Type: application/json
+# {
+# 	"username"   : "mary",
+#         "password"   : "mary"
+# }
+
+
+
+# POST http://localhost:3000/auth/register
+# Content-Type: application/json
+# {
+# 	"username"   : "mary",
+# 	"password"   : "mary",
+# 	"first_name" : "mary",
+# 	"last_name"  : "smith",
+# 	"phone"      : "222-222-2222"
+# }
+
+
+
+
+# POST http://localhost:3000/messages/
+# Content-Type: application/json
+# {
+# 	"body" : " I really want to go out for dinner",
+# 	"to_username" : "mary",
+# 	"from_username" : "frank",
+#   "_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcnkiLCJpYXQiOjE2ODk4MDYwNjN9.M2CpShJt0ZuWwhddH78XO9NuVLD-tvAC0YlW1Nm92wY"
+# }
+
+
+
+
+# POST http://localhost:3000/books
+# Content-Type: application/json
+# {
+#     "book": {
+#         "isbn": "0691161518",
+#         "amazon-url": "http://a.co/eobPtX2",
+#         "author": "Matthew Lane",
+#         "language": "english",
+#         "pages": 264,
+#         "publisher": "Princeton University Press",
+#         "title": "Power-Up: Unlocking Hidden Math in Video Games",
+#         "year": 1970
+#     }
+# }
+
+
+# DELETE http://localhost:3000/books/0691161518
+# {
+# 	"book": {
+# 	"isbn" : 0691161518,
+#         "amazon-url": "http://a.co/eobPtX2",
+#         "author": "Matthew Lane",
+#         "language": "english",
+#         "pages": 264,
+#         "publisher": "Princeton University Press",
+#         "title": "Power-Up: Unlocking Hidden Math in Video Games",
+#         "year": 1970
+# 	}
+# }
+
+GET http://localhost:3001/companies
+{
+	"book": {
+	"amazon-url" : "http://ari.ari.com"
+	}
+}
