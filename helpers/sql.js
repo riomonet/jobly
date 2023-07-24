@@ -70,6 +70,44 @@ return { clause: res, values: Object.values(body) }
 }
 
 
-module.exports = { sqlForPartialUpdate , getWhereClause};
+function jobWhereClause (body) {
+
+    let res = {clause: "", values: []}
+
+    if (body === undefined)
+	return res
+
+    let k = Object.keys(body)
+    
+    if (k.length === 0)
+	return res
+
+
+    res = k.reduce((acc, cur, idx) => {
+
+	let tmp = acc;
+	if (cur === 'title')
+	    tmp += ` title = `;
+	if (cur === 'minSalary')
+	    tmp += ` salary >= `;
+	if (cur === 'hasEquity')
+	    tmp += ` equity > `;
+
+	tmp += `$${idx + 1}`;
+	if(idx < k.length -1)
+	    tmp += ', ';
+
+	return tmp;
+    
+    }, 'WHERE')
+
+return { clause: res, values: Object.values(body) }
+
+}
+
+
+
+
+module.exports = { sqlForPartialUpdate , getWhereClause, jobWhereClause};
 
 
