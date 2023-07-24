@@ -1,3 +1,4 @@
+
 "use strict";
 
 const request = require("supertest");
@@ -11,7 +12,8 @@ const {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
-  u1Token,
+    u1Token,
+    u2Token
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -22,7 +24,7 @@ afterAll(commonAfterAll);
 /************************************** POST /users */
 
 describe("POST /users", function () {
-  test("works for users: create non-admin", async function () {
+  test("admin can create a user", async function () {
     const resp = await request(app)
         .post("/users")
         .send({
@@ -46,7 +48,22 @@ describe("POST /users", function () {
     });
   });
 
-  test("works for users: create admin", async function () {
+    test("non admin  cannot create a user", async function () {
+    const resp = await request(app)
+        .post("/users")
+        .send({
+          username: "u-new",
+          firstName: "First-new",
+          lastName: "Last-newL",
+          password: "password-new",
+          email: "new@email.com",
+          isAdmin: false,
+        })
+        .set("authorization", `Bearer ${u2Token}`);
+    expect(resp.statusCode).toEqual(401);
+  });
+
+  test("admin can create admin", async function () {
     const resp = await request(app)
         .post("/users")
         .send({
@@ -143,10 +160,17 @@ describe("GET /users", function () {
       ],
     });
   });
-
+    
   test("unauth for anon", async function () {
     const resp = await request(app)
-        .get("/users");
+          .get("/users");
+    expect(resp.statusCode).toEqual(401);
+  });
+
+    test("unauth for non admin", async function () {
+    const resp = await request(app)
+          .get("/users")
+	  .set("authorization", `Bearer ${u2Token}`);
     expect(resp.statusCode).toEqual(401);
   });
 
@@ -180,9 +204,10 @@ describe("GET /users/:username", function () {
     });
   });
 
-  test("unauth for anon", async function () {
+  test("unauth for non authorized user", async function () {
     const resp = await request(app)
-        .get(`/users/u1`);
+          .get(`/users/u1`)
+	  .set("authorization", `Bearer ${u2Token}`)
     expect(resp.statusCode).toEqual(401);
   });
 
@@ -191,6 +216,13 @@ describe("GET /users/:username", function () {
         .get(`/users/nope`)
         .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(404);
+  });
+
+    test("User can see own record", async function () {
+    const resp = await request(app)
+          .get(`/users/u2`)
+	  .set("authorization", `Bearer ${u2Token}`)
+    expect(resp.statusCode).toEqual(200);
   });
 });
 
@@ -215,6 +247,22 @@ describe("PATCH /users/:username", () => {
     });
   });
 
+  test("unauth for non authorized user", async function () {
+    const resp = await request(app)
+          .patch(`/users/u1`)
+	  .set("authorization", `Bearer ${u2Token}`)
+    expect(resp.statusCode).toEqual(401);
+  });
+
+    test("User can patch own record", async function () {
+    const resp = await request(app)
+          .patch(`/users/u2`)
+	  .send({firstName: "Harvey"})
+	  .set("authorization", `Bearer ${u2Token}`)
+    expect(resp.statusCode).toEqual(200);
+  });
+
+    
   test("unauth for anon", async function () {
     const resp = await request(app)
         .patch(`/users/u1`)
@@ -275,9 +323,18 @@ describe("DELETE /users/:username", function () {
     expect(resp.body).toEqual({ deleted: "u1" });
   });
 
-  test("unauth for anon", async function () {
+  test("User can delete own record", async function () {
     const resp = await request(app)
-        .delete(`/users/u1`);
+          .delete(`/users/u2`)
+	  .set("authorization", `Bearer ${u2Token}`)
+    expect(resp.statusCode).toEqual(200);
+  });
+
+    
+  test("unauth for non authorized user", async function () {
+    const resp = await request(app)
+          .delete(`/users/u1`)
+	  .set("authorization", `Bearer ${u2Token}`)
     expect(resp.statusCode).toEqual(401);
   });
 

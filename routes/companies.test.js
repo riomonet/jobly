@@ -224,6 +224,17 @@ describe("PATCH /companies/:handle", function () {
         .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(400);
   });
+
+   test("unauthorized", async function () {
+    const resp = await request(app)
+        .patch("/companies/c1")
+        .send({
+          handle: "alt",
+        })
+        .set("authorization", `Bearer ${u2Token}`);
+    expect(resp.statusCode).toEqual(401);
+  });
+
 });
 
 /************************************** DELETE /companies/:handle */
@@ -248,4 +259,12 @@ describe("DELETE /companies/:handle", function () {
         .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(404);
   });
+
+   test("unauthorized", async function () {
+       const resp = await request(app)
+        .delete("/companies/c2")
+        .set("authorization", `Bearer ${u2Token}`);
+    expect(resp.statusCode).toEqual(401);
+  });
+
 });
