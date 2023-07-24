@@ -2,7 +2,7 @@
 
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
-const { sqlForPartialUpdate } = require("../helpers/sql");
+const { sqlForPartialUpdate, getWhereClause } = require("../helpers/sql");
 
 /** Related functions for companies. */
 
@@ -49,15 +49,18 @@ class Company {
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll() {
-    const companiesRes = await db.query(
+    static async findAll(filters) {
+
+	let whereClause = getWhereClause (filters);
+	const companiesRes = await db.query(
           `SELECT handle,
                   name,
                   description,
                   num_employees AS "numEmployees",
                   logo_url AS "logoUrl"
-           FROM companies
-           ORDER BY name`);
+           FROM companies ${whereClause.clause}
+           ORDER BY name`, whereClause.values);
+	       
     return companiesRes.rows;
   }
 

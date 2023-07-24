@@ -96,6 +96,16 @@ describe("GET /companies", function () {
     });
   });
 
+    test("invalid query string", async function () {
+	const resp = await request(app).get("/companies").query({office: 1});
+	expect(resp.statusCode).toEqual(400);
+    });
+
+     test("min > max", async function () {
+	 const resp = await request(app).get("/companies").query({minEmployess: 3, maxEmployees: 1});
+	expect(resp.statusCode).toEqual(400);
+     });
+    
   test("fails: test next() handler", async function () {
     // there's no normal failure event which will cause this route to fail ---
     // thus making it hard to test that the error-handler works with it. This

@@ -1,5 +1,4 @@
 "use strict";
-
 const db = require("../db.js");
 const { BadRequestError, NotFoundError } = require("../expressError");
 const Company = require("./company.js");
@@ -86,6 +85,49 @@ describe("findAll", function () {
     ]);
   });
 });
+/************************************** findAllWithFilter */
+
+describe("findAll", function () {
+  test("filter by name", async function () {
+      let companies = await Company.findAll({name: "C1"});
+    expect(companies).toEqual([
+      {
+        handle: "c1",
+        name: "C1",
+        description: "Desc1",
+        numEmployees: 1,
+        logoUrl: "http://c1.img",
+      }
+    ]);
+  });
+
+      test("filter by minEmployees", async function () {
+      let companies = await Company.findAll({minEmployees: 3});
+    expect(companies).toEqual([
+      {
+        handle: "c3",
+        name: "C3",
+        description: "Desc3",
+        numEmployees: 3,
+        logoUrl: "http://c3.img",
+      }
+    ]);
+      });
+
+    test("filter by maxEmployees", async function () {
+	     let companies = await Company.findAll({maxEmployees: 1});
+	     expect(companies).toEqual([
+		 {
+		     handle: "c1",
+		     name: "C1",
+		     description: "Desc1",
+		     numEmployees: 1,
+		     logoUrl: "http://c1.img",
+		 }
+	     ]);
+    });
+});
+
 
 /************************************** get */
 
@@ -193,7 +235,7 @@ describe("remove", function () {
   test("works", async function () {
     await Company.remove("c1");
     const res = await db.query(
-        "SELECT handle FROM companies WHERE handle='c1'");
+        "SELECT handle FROM companies WHERE handle='C1'");
     expect(res.rows.length).toEqual(0);
   });
 
