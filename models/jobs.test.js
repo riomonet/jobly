@@ -142,3 +142,84 @@ describe("findAll", function () {
     ]);
   });
 });
+
+
+//***********************************************************************************UPDDAY WORKING HERE
+
+describe("update", function () {
+    const updateData = {
+    title: "j5",
+    company_handle: "c1",
+    salary: 5,
+    equity: "0.5"
+  };
+
+    
+    test("works", async function () {
+
+	let  results = await db.query (
+	`SELECT id FROM jobs WHERE title = 'j1' and
+	company_handle = 'c1'`)
+	let job = await Job.update(results.rows[0].id, updateData);
+	expect(job).toEqual({
+	    title: "j5",
+	    ...updateData,
+	});
+
+    const result = await db.query(
+        `SELECT title, salary, equity, company_handle
+           FROM jobs
+           WHERE title = 'j5' and company_handle = 'c1'`);
+    expect(result.rows).toEqual([{
+	company_handle: "c1",
+	title: "j5",
+	salary: 5,
+	equity: "0.5"
+    }]);
+  });
+
+  // test("works: null fields", async function () {
+  //   const updateDataSetNulls = {
+  //     name: "New",
+  //     description: "New Description",
+  //     numEmployees: null,
+  //     logoUrl: null,
+  //   };
+
+  //   let company = await Company.update("c1", updateDataSetNulls);
+  //   expect(company).toEqual({
+  //     handle: "c1",
+  //     ...updateDataSetNulls,
+  //   });
+
+  //   const result = await db.query(
+  //         `SELECT handle, name, description, num_employees, logo_url
+  //          FROM companies
+  //          WHERE handle = 'c1'`);
+  //   expect(result.rows).toEqual([{
+  //     handle: "c1",
+  //     name: "New",
+  //     description: "New Description",
+  //     num_employees: null,
+  //     logo_url: null,
+  //   }]);
+  // });
+
+  // test("not found if no such company", async function () {
+  //   try {
+  //     await Company.update("nope", updateData);
+  //     fail();
+  //   } catch (err) {
+  //     expect(err instanceof NotFoundError).toBeTruthy();
+  //   }
+  // });
+
+  // test("bad request with no data", async function () {
+  //   try {
+  //     await Company.update("c1", {});
+  //     fail();
+  //   } catch (err) {
+  //     expect(err instanceof BadRequestError).toBeTruthy();
+  //   }
+  // });
+});

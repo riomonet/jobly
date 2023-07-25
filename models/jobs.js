@@ -89,42 +89,36 @@ class Job {
   //   return company;
   // }
 
-  /** Update company data with `data`.
+  /** Update job data with `data`.
    *
    * This is a "partial update" --- it's fine if data doesn't contain all the
    * fields; this only changes provided ones.
    *
-   * Data can include: {name, description, numEmployees, logoUrl}
+   * Data can include: {title, salary, equity}
    *
-   * Returns {handle, name, description, numEmployees, logoUrl}
+   * Returns {title, salary, equity, company_handle}
    *
    * Throws NotFoundError if not found.
    */
+  static async update(job_id, data) {
 
-  // static async update(handle, data) {
-  //   const { setCols, values } = sqlForPartialUpdate(
-  //       data,
-  //       {
-  //         numEmployees: "num_employees",
-  //         logoUrl: "logo_url",
-  //       });
-  //   const handleVarIdx = "$" + (values.length + 1);
+      const { setCols, values } = sqlForPartialUpdate(
+        data,
+        {
+          title: "title",
+          salary: "salary",
+          equity: "equity",
+        });
 
-  //   const querySql = `UPDATE companies 
-  //                     SET ${setCols} 
-  //                     WHERE handle = ${handleVarIdx} 
-  //                     RETURNING handle, 
-  //                               name, 
-  //                               description, 
-  //                               num_employees AS "numEmployees", 
-  //                               logo_url AS "logoUrl"`;
-  //   const result = await db.query(querySql, [...values, handle]);
-  //   const company = result.rows[0];
+      const result  = await db.query(`UPDATE jobs 
+                      SET ${setCols} 
+                      WHERE id = ${job_id}
+                      RETURNING title, salary, equity, company_handle`, [...values]);
 
-  //   if (!company) throw new NotFoundError(`No company: ${handle}`);
-
-  //   return company;
-  // }
+      const job = result.rows[0]
+      if (!job) throw new NotFoundError(`No Job: ${job_id}`);
+      return job;
+  }
 
   /** Delete given company from database; returns undefined.
    *
