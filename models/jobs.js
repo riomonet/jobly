@@ -102,6 +102,9 @@ class Job {
    */
   static async update(job_id, data) {
 
+      if (typeof job_id !== 'number')
+	  throw new NotFoundError(`No Job: ${job_id}`);
+	  
       const { setCols, values } = sqlForPartialUpdate(
         data,
         {
@@ -110,6 +113,7 @@ class Job {
           equity: "equity",
         });
 
+      
       const result  = await db.query(`UPDATE jobs 
                       SET ${setCols} 
                       WHERE id = ${job_id}
@@ -125,18 +129,22 @@ class Job {
    * Throws NotFoundError if company not found.
    **/
 
-//   static async remove(handle) {
-//     const result = await db.query(
-//           `DELETE
-//            FROM companies
-//            WHERE handle = $1
-//            RETURNING handle`,
-//         [handle]);
-//     const company = result.rows[0];
+    static async remove(id) {
 
-//     if (!company) throw new NotFoundError(`No company: ${handle}`);
-//   }
-// }
+	// if (typeof id !== 'number')
+	//   throw new NotFoundError(`No Job: ${id}`);
 
+    const result = await db.query(
+          `DELETE
+           FROM jobs
+           WHERE id = $1
+           RETURNING id`,
+        [id]);
+    const job = result.rows[0];
+
+    if (!job) throw new NotFoundError(`No job_id: ${id}`);
+  }
 }
+
+
 module.exports = Job;
