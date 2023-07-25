@@ -237,31 +237,31 @@ describe("update", function () {
 
 /************************************** remove */
 
-// describe("remove", function () {
+describe("remove", function () {
 
-//     async function getId(job, company) {
+    async function getId(job, company) {
 	
-// 	let results = await db.query (
-// 	`SELECT id FROM jobs WHERE title = '${job}' and
-// 	company_handle = '${company}'`)
-// 	return results.rows[0].id
+	let results = await db.query (
+	`SELECT id FROM jobs WHERE title = '${job}' and
+	company_handle = '${company}'`)
+	return results.rows[0].id
 
-//     }
+    }
 
-//     test("works", async function () {
-// 	let id = getId('j1','c1')
-// 	await Job.remove(id);
-// 	const res = await db.query(
-//             "SELECT id FROM jobs WHERE id=${id}");
-// 	expect(res.rows.length).toEqual(0);
-//   });
+    test("works", async function () {
+	let id = await getId('j1','c1')
+	await Job.remove(id);
+	const res = await db.query(
+           `SELECT id FROM jobs WHERE id = ${id}`);
+	expect(res.rows.length).toEqual(0);
+  });
 
-  // test("not found if no such job", async function () {
-  //   try {
-  //     await Job.remove(1000);
-  //     fail();
-  //   } catch (err) {
-  //     expect(err instanceof NotFoundError).toBeTruthy();
-  //   }
-  // });
-// });
+  test("not found if no such job", async function () {
+    try {
+      await Job.remove(1000);
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});

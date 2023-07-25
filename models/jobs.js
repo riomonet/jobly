@@ -131,8 +131,8 @@ class Job {
 
     static async remove(id) {
 
-	// if (typeof id !== 'number')
-	//   throw new NotFoundError(`No Job: ${id}`);
+	if (typeof id !== 'number')
+	  throw new NotFoundError(`No Job: ${id}`);
 
     const result = await db.query(
           `DELETE
