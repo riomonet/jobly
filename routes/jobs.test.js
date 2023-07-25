@@ -21,6 +21,14 @@ afterAll(commonAfterAll);
 
 /************************************** POST /job */
 
+    async function getId(job, company) {
+	let results = await db.query (
+	`SELECT id FROM jobs WHERE title = '${job}' and
+	company_handle = '${company}'`)
+	return results.rows[0].id
+    }
+
+
 describe("POST /jobs", function () {
   const newJob = {
       company_handle: "c1",
@@ -70,95 +78,96 @@ describe("POST /jobs", function () {
 
 
 
-// /************************************** GET /companies */
+/************************************** GET /jobs */
 
-// describe("GET /companies", function () {
-//   test("ok for anon", async function () {
-//     const resp = await request(app).get("/companies");
-//     expect(resp.body).toEqual({
-//       companies:
-//           [
-//             {
-//               handle: "c1",
-//               name: "C1",
-//               description: "Desc1",
-//               numEmployees: 1,
-//               logoUrl: "http://c1.img",
-//             },
-//             {
-//               handle: "c2",
-//               name: "C2",
-//               description: "Desc2",
-//               numEmployees: 2,
-//               logoUrl: "http://c2.img",
-//             },
-//             {
-//               handle: "c3",
-//               name: "C3",
-//               description: "Desc3",
-//               numEmployees: 3,
-//               logoUrl: "http://c3.img",
-//             },
-//           ],
-//     });
-//   });
+describe("GET /jobs", function () {
+  test("ok for anon", async function () {
+    const resp = await request(app).get("/jobs");
+      expect(resp.body).toEqual({
+      jobs:
+          [
+	      {
+		  title: "j1",
+		  salary: 1,
+		  equity: "0.1",
+		  company_handle: "c1"
+	      },
+	      {
+		  title: "j2",
+		  salary: 2,
+		  equity: "0.2",
+		  company_handle: "c2"
+	      },
+	      {
+		  title: "j3",
+		  salary: 3,
+		  equity: "0.3",
+		  company_handle: "c3"
+	      },
 
-//     test("invalid query string", async function () {
-// 	const resp = await request(app).get("/companies").query({office: 1});
-// 	expect(resp.statusCode).toEqual(400);
-//     });
+          ],
+    });
+  });
 
-//      test("min > max", async function () {
-// 	 const resp = await request(app).get("/companies").query({minEmployess: 3, maxEmployees: 1});
-// 	expect(resp.statusCode).toEqual(400);
-//      });
+
+    test("invalid query string", async function () {
+	const resp = await request(app).get("/jobs").query({office: 1});
+	expect(resp.statusCode).toEqual(400);
+    });
+
+     test("equity > 1", async function () {
+	 const resp = await request(app).get("/companies").query({equity: 3});
+	expect(resp.statusCode).toEqual(400);
+     });
     
-//   test("fails: test next() handler", async function () {
-//     // there's no normal failure event which will cause this route to fail ---
-//     // thus making it hard to test that the error-handler works with it. This
-//     // should cause an error, all right :)
-//     await db.query("DROP TABLE companies CASCADE");
-//     const resp = await request(app)
-//         .get("/companies")
-//         .set("authorization", `Bearer ${u1Token}`);
-//     expect(resp.statusCode).toEqual(500);
-//   });
-// });
+  test("fails: test next() handler", async function () {
+    // there's no normal failure event which will cause this route to fail ---
+    // thus making it hard to test that the error-handler works with it. This
+    // should cause an error, all right :)
+    await db.query("DROP TABLE jobs CASCADE");
+    const resp = await request(app)
+        .get("/jobs")
+        .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(500);
+  });
+});
 
-// /************************************** GET /companies/:handle */
+/************************************** GET /companies/:handle */
 
-// describe("GET /companies/:handle", function () {
-//   test("works for anon", async function () {
-//     const resp = await request(app).get(`/companies/c1`);
-//     expect(resp.body).toEqual({
-//       company: {
-//         handle: "c1",
-//         name: "C1",
-//         description: "Desc1",
-//         numEmployees: 1,
-//         logoUrl: "http://c1.img",
-//       },
-//     });
-//   });
+describe("GET /jobs/:id", function () {
 
-//   test("works for anon: company w/o jobs", async function () {
-//     const resp = await request(app).get(`/companies/c2`);
-//     expect(resp.body).toEqual({
-//       company: {
-//         handle: "c2",
-//         name: "C2",
-//         description: "Desc2",
-//         numEmployees: 2,
-//         logoUrl: "http://c2.img",
-//       },
-//     });
-//   });
+    // async function getId(job, company) {
+    // 	let results = await db.query (
+    // 	`SELECT id FROM jobs WHERE title = '${job}' and
+    // 	company_handle = '${company}'`)
+    // 	return results.rows[0].id
+    // }
+    
+    test("works for admin", async function () {
+	const id = await getId('j1','c1')
+	const resp = await request(app).get(`/jobs/${id}`).set("authorization", `Bearer ${u1Token}`);
+	expect(resp.body).toEqual({
+	job: {
+	    title: "j1",
+		  salary: 1,
+	    equity: "0.1",
+		  company_handle: "c1"
+	}
+	});
+    });
 
-//   test("not found for no such company", async function () {
-//     const resp = await request(app).get(`/companies/nope`);
-//     expect(resp.statusCode).toEqual(404);
-//   });
-// });
+    test("works doens not work for non admin", async function () {
+	const id = await getId('j1','c1')
+	const resp = await request(app).get(`/jobs/${id}`).set("authorization", `Bearer ${u2Token}`);
+	expect(resp.statusCode).toEqual(401);
+    });
+
+
+  test("not found for no such job", async function () {
+    const resp = await request(app).get(`/jobs/10000`).set("authorization", `Bearer ${u1Token}`);;
+    expect(resp.statusCode).toEqual(404);
+  });
+});
 
 // /************************************** PATCH /companies/:handle */
 
