@@ -19,9 +19,6 @@ beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
 
-
-
-
 /************************************** POST /job */
 
 describe("POST /jobs", function () {
@@ -29,7 +26,7 @@ describe("POST /jobs", function () {
       company_handle: "c1",
       title: "New",
       salary: 100,
-      equity: "0.1",
+      equity: 0.1,
   };
 
     test("ok for admin", async function () {
@@ -39,44 +36,39 @@ describe("POST /jobs", function () {
           .set("authorization", `Bearer ${u1Token}`);
 	expect(resp.statusCode).toEqual(201);
 	expect(resp.body).toEqual({
-	    job: newJob,
+	    job: {...newJob, equity: "0.1"},
 	});
     });
+
+      test("unauthorized", async function () {
+    const resp = await request(app)
+        .post("/jobs")
+          .send({
+	      title: "j4",
+              company_handle: "c1",
+              salary: 10,
+	      equity: 0.1
+        })
+        .set("authorization", `Bearer ${u2Token}`);
+	  expect(resp.statusCode).toEqual(401);
+      });
+
+  test("bad request with invalid data", async function () {
+    const resp = await request(app)
+        .post("/jobs")
+          .send({
+	      title: "j5",
+              company_handle: "c1",
+              salary: 10,
+	      equity: 3
+        })
+        .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(400);
+  });
 });
 
-//   test("ok for users", async function () {
-//     const resp = await request(app)
-//         .post("/companies")
-//         .send(newCompany)
-//         .set("authorization", `Bearer ${u1Token}`);
-//     expect(resp.statusCode).toEqual(201);
-//     expect(resp.body).toEqual({
-//       company: newCompany,
-//     });
-//   });
 
-//       test("unauthorized", async function () {
-//     const resp = await request(app)
-//         .post("/companies")
-//         .send({
-//           handle: "alt",
-//           numEmployees: 10,
-//         })
-//         .set("authorization", `Bearer ${u2Token}`);
-//     expect(resp.statusCode).toEqual(401);
-//   });
 
-//   test("bad request with invalid data", async function () {
-//     const resp = await request(app)
-//         .post("/companies")
-//         .send({
-//           ...newCompany,
-//           logoUrl: "not-a-url",
-//         })
-//         .set("authorization", `Bearer ${u1Token}`);
-//     expect(resp.statusCode).toEqual(400);
-//   });
-// });
 
 // /************************************** GET /companies */
 

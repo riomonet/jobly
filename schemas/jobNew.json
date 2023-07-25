@@ -14,7 +14,8 @@
       "maxLength": 10
     },
     "equity": {
-      "type": "numeric"
+	"type": "number",
+	"maximum":  1
     },
     "salary": {
       "type": "integer",
