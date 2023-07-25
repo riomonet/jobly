@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "http://our.company.com/jobQuery.schema.json",
+  "$id": "http://example.com/example.json",
   "type": "object",
   "properties": {
     "title": {
@@ -13,9 +13,10 @@
       "minimum": 0
     },
       "equity": {
-      "type": "numeric",
+      "type": "numeric"
     }
   },
   "additionalProperties": false,
-  "required": []
+    "required": [
+  ]
 }

@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "http://our.company.com/jobUpdate.schema.json",
+  "$id": "http://example.com/example.json",
   "type": "object",
   "properties": {
     "title": {
@@ -18,6 +18,6 @@
   },
   "additionalProperties": false,
   "required": [
-  ],
+  ]
 }
 

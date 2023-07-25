@@ -44,9 +44,9 @@ class Job {
 
   }
 
-  /** Find all companies.
+  /** Find all jobs.
    *
-   * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
+   * Returns [{ title, salary, equity , company handle }, ...]
    * */
 
     static async findAll(filters) {
@@ -63,31 +63,29 @@ class Job {
     return jobsRes.rows;
   }
 
-  /** Given a company handle, return data about company.
+  /** Given a job id, return data about job.
    *
-   * Returns { handle, name, description, numEmployees, logoUrl, jobs }
-   *   where jobs is [{ id, title, salary, equity, companyHandle }, ...]
+   * Returns { id, title, salary, equity,company_handle }
    *
    * Throws NotFoundError if not found.
    **/
 
-  // static async get(handle) {
-  //   const companyRes = await db.query(
-  //         `SELECT handle,
-  //                 name,
-  //                 description,
-  //                 num_employees AS "numEmployees",
-  //                 logo_url AS "logoUrl"
-  //          FROM companies
-  //          WHERE handle = $1`,
-  //       [handle]);
+  static async get(id) {
 
-  //   const company = companyRes.rows[0];
+      const jobRes = await db.query(
+          `SELECT title,
+                  salary,
+                  equity,
+		  company_handle
+           FROM jobs
+           WHERE id = $1`,
+        [id]);
 
-  //   if (!company) throw new NotFoundError(`No company: ${handle}`);
-
-  //   return company;
-  // }
+    const job = jobRes.rows[0];
+    if (!job) throw new NotFoundError(`No job: ${id}`);
+      
+    return job;
+  }
 
   /** Update job data with `data`.
    *
@@ -124,9 +122,9 @@ class Job {
       return job;
   }
 
-  /** Delete given company from database; returns undefined.
+  /** Delete given job from database; returns undefined.
    *
-   * Throws NotFoundError if company not found.
+   * Throws NotFoundError if job not found.
    **/
 
     static async remove(id) {

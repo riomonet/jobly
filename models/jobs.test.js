@@ -265,3 +265,42 @@ describe("remove", function () {
     }
   });
 });
+
+/************************************** get */
+
+describe("get", function () {
+
+    async function getId(job, company) {
+	
+	let results = await db.query (
+	`SELECT id FROM jobs WHERE title = '${job}' and
+	company_handle = '${company}'`)
+	return results.rows[0].id
+
+    }
+
+    test("works", async function () {
+	const id = await getId('j1','c1')
+	let job = await Job.get(id);
+    expect(job).toEqual({
+	title: "j1",
+	salary: 1,
+	equity: "0.1",
+	company_handle: "c1"
+    });
+  });
+
+    test("not found if no such company", async function () {
+
+    try {
+      await Job.get(100000);
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});
+
+
+
+

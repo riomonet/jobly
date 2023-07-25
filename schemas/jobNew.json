@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "http://our.company.com/jobNew.schema.json",
+  "$id": "http://example.com/example.json",
   "type": "object",
   "properties": {
     "title": {
@@ -27,6 +27,5 @@
     "company_handle",
       "salary",
       "equity"
-  ],
+  ]
 }
-
