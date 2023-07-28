@@ -21,12 +21,6 @@ afterAll(commonAfterAll);
 
 /************************************** POST /job */
 
-    async function getId(job, company) {
-	let results = await db.query (
-	`SELECT id FROM jobs WHERE title = '${job}' and
-	company_handle = '${company}'`)
-	return results.rows[0].id
-    }
 
 
 describe("POST /jobs", function () {
@@ -136,12 +130,12 @@ describe("GET /jobs", function () {
 
 describe("GET /jobs/:id", function () {
 
-    // async function getId(job, company) {
-    // 	let results = await db.query (
-    // 	`SELECT id FROM jobs WHERE title = '${job}' and
-    // 	company_handle = '${company}'`)
-    // 	return results.rows[0].id
-    // }
+    async function getId(job, company) {
+	let results = await db.query (
+	`SELECT id FROM jobs WHERE title = '${job}' and
+	company_handle = '${company}'`)
+	return results.rows[0].id
+    }
     
     test("works for admin", async function () {
 	const id = await getId('j1','c1')
@@ -241,34 +235,45 @@ describe("GET /jobs/:id", function () {
 
 // });
 
-// /************************************** DELETE /companies/:handle */
+/************************************** DELETE /companies/:handle */
 
-// describe("DELETE /companies/:handle", function () {
-//   test("works for users", async function () {
-//     const resp = await request(app)
-//         .delete(`/companies/c1`)
-//         .set("authorization", `Bearer ${u1Token}`);
-//     expect(resp.body).toEqual({ deleted: "c1" });
-//   });
+describe("DELETE /jobs/:id", function () {
 
-//   test("unauth for anon", async function () {
-//     const resp = await request(app)
-//         .delete(`/companies/c1`);
-//     expect(resp.statusCode).toEqual(401);
-//   });
+    async function getId(job, company) {
+	let results = await db.query (
+	`SELECT id FROM jobs WHERE title = '${job}' and
+	company_handle = '${company}'`)
+	return results.rows[0].id
+    }
 
-//   test("not found for no such company", async function () {
-//     const resp = await request(app)
-//         .delete(`/companies/nope`)
-//         .set("authorization", `Bearer ${u1Token}`);
-//     expect(resp.statusCode).toEqual(404);
-//   });
+    test("works for admin", async function () {
+	const id = await getId('j1','c1')
+	const resp = await request(app)
+          .delete(`/jobs/${id}`)
+        .set("authorization", `Bearer ${u1Token}`);
+	expect(resp.body).toEqual({ deleted: `${id}` });
+  });
 
-//    test("unauthorized", async function () {
-//        const resp = await request(app)
-//         .delete("/companies/c2")
-//         .set("authorization", `Bearer ${u2Token}`);
-//     expect(resp.statusCode).toEqual(401);
-//   });
+    test("unauth for anon", async function () {
+	const id = await getId('j1','c1')
+    const resp = await request(app)
+          .delete(`/jobs/${id}`);
+    expect(resp.statusCode).toEqual(401);
+  });
 
-// });
+  test("not found for no such job", async function () {
+    const resp = await request(app)
+        .delete(`/job/100000`)
+        .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(404);
+  });
+
+    test("unauthorized", async function () {
+	const id = await getId('j1','c1')
+       const resp = await request(app)
+             .delete(`/jobs/${id}`)
+        .set("authorization", `Bearer ${u2Token}`);
+    expect(resp.statusCode).toEqual(401);
+  });
+
+});

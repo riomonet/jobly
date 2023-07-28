@@ -215,7 +215,7 @@ describe("update", function () {
 
   test("not found if no such job", async function () {
     try {
-	await Job.update("NONE", updateData);
+	await Job.update(1000002, updateData);
 	fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
