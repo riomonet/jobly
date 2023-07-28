@@ -88,7 +88,8 @@ describe("GET /companies", function () {
               name: "C1",
               description: "Desc1",
               numEmployees: 1,
-              logoUrl: "http://c1.img",
+		logoUrl: "http://c1.img",
+
             },
             {
               handle: "c2",
@@ -141,11 +142,13 @@ describe("GET /companies/:handle", function () {
         name: "C1",
         description: "Desc1",
         numEmployees: 1,
-        logoUrl: "http://c1.img",
+          logoUrl: "http://c1.img",
+	  title: "j1"
       },
     });
   });
 
+    
   test("works for anon: company w/o jobs", async function () {
     const resp = await request(app).get(`/companies/c2`);
     expect(resp.body).toEqual({
@@ -154,7 +157,8 @@ describe("GET /companies/:handle", function () {
         name: "C2",
         description: "Desc2",
         numEmployees: 2,
-        logoUrl: "http://c2.img",
+          logoUrl: "http://c2.img",
+	  title: "j2"
       },
     });
   });

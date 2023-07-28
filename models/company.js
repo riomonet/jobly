@@ -78,8 +78,10 @@ class Company {
                   name,
                   description,
                   num_employees AS "numEmployees",
-                  logo_url AS "logoUrl"
-           FROM companies
+                  logo_url AS "logoUrl",
+		  jobs.title
+           FROM companies INNER JOIN jobs ON
+	  jobs.company_handle = companies.handle
            WHERE handle = $1`,
         [handle]);
 
