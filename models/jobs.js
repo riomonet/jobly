@@ -100,8 +100,8 @@ class Job {
    */
   static async update(job_id, data) {
 
-      if (typeof job_id !== 'number')
-	  throw new NotFoundError(`No Job: ${job_id}`);
+      // if (typeof job_id !== 'number')
+      // 	  throw new NotFoundError(`No Job: ${job_id}`);
 	  
       const { setCols, values } = sqlForPartialUpdate(
         data,
