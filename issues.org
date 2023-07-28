@@ -1,0 +1,4 @@
+* <2023-07-27 Thu> add more testing for User.apply models and routes
+
+
+* <2023-07-27 Thu>  Change the output of the get-all-info methods and routes for users so those include the a field with a simple list of job IDs the user has applied for: { ..., jobs: [ jobId, jobId, ... ] }

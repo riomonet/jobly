@@ -1,0 +1,46 @@
+diff a/routes/jobs.js b/routes/jobs.js	(rejected hunks)
+@@ -84,6 +84,44 @@ router.get("/:id", ensureAdmin, async function (req, res, next) {
+   }
+ });
+ 
++/** PATCH /[handle] { fld1, fld2, ... } => { company }
++ *
++ * Patches company data.
++ *
++ * fields can be: { name, description, numEmployees, logo_url }
++ *
++ * Returns { handle, name, description, numEmployees, logo_url }
++ *
++ * Authorization required: login
++ */
++
++router.patch("/:id", ensureAdmin, async function (req, res, next) {
++  try {
++    const validator = jsonschema.validate(req.body, jobUpdateSchema);
++    if (!validator.valid) {
++      const errs = validator.errors.map(e => e.stack);
++      throw new BadRequestError(errs);
++    }
++    const job = await Job.update(req.params.id, req.body);
++    return res.json({ job });
++  } catch (err) {
++    return next(err);
++  }
++});
++
++/** DELETE /[handle]  =>  { deleted: handle }
++ *
++ * Authorization: login
++ */
++
++// router.delete("/:handle", ensureAdmin, async function (req, res, next) {
++//   try {
++//     await Company.remove(req.params.handle);
++//     return res.json({ deleted: req.params.handle });
++//   } catch (err) {
++//     return next(err);
++//   }
++// });
+ 
+ 
+ module.exports = router;

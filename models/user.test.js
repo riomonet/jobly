@@ -228,3 +228,29 @@ describe("remove", function () {
     }
   });
 });
+
+/********************************* apply */
+describe("apply", function () {
+
+    async function getId(job, company) {
+	let results = await db.query (
+	    `SELECT id FROM jobs WHERE title = '${job}' and
+	company_handle = '${company}'`)
+	return results.rows[0].id
+    }
+    
+    test("works", async function () {
+	const id = await getId("j1", "c1")
+	let application  = await User.apply("u1", `${id}`)
+	expect(application).toEqual({
+	    username: "u1",
+	    job_id: id
+	});
+    })
+})
+
+
+
+
+
+

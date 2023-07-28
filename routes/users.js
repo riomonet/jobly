@@ -120,4 +120,13 @@ router.delete("/:username", ensureAuth, async function (req, res, next) {
 });
 
 
+router.post("/:username/jobs/:id", ensureAuth, async function (req , res, next) {
+    try{
+	await User.apply(req.params.username, req.params.id)
+	return res.json({applied : req.params.id})
+    } catch (err) {
+	next(err)
+    }
+}) 
+
 module.exports = router;
